@@ -3,6 +3,7 @@ package com.documents.management.system.views.screens;
 import com.documents.management.system.common.GlobalVariables;
 import com.documents.management.system.views.components.GenericButton;
 import com.documents.management.system.views.components.GenericImage;
+import com.documents.management.system.views.dialogs.QuitAppDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,7 @@ public class MainMenu extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                exit();
+                QuitAppDialog.create(MainMenu.this);
             }
         });
 
@@ -37,7 +38,7 @@ public class MainMenu extends JFrame {
 
         panel.add(GenericButton.create(
             "Cadastrar novo documento",
-            Color.BLACK,
+            Color.BLUE,
             e -> {}
         ));
 
@@ -68,7 +69,9 @@ public class MainMenu extends JFrame {
         panel.add(GenericButton.create(
             "Sair",
             Color.RED,
-            e -> { exit(); }
+            e -> {
+                QuitAppDialog.create(this);
+            }
         ));
 
         add(panel, new GridBagConstraints());
@@ -76,22 +79,5 @@ public class MainMenu extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         setVisible(true);
-    }
-
-    private void exit() {
-        int response = JOptionPane.showOptionDialog(
-            this,
-            "Você realmente deseja sair?",
-            "Sair",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            new Object[]{"Sim", "Não"},
-            "Sim"
-        );
-
-        if (response == JOptionPane.YES_OPTION) {
-            System.exit(0);
-        }
     }
 }
