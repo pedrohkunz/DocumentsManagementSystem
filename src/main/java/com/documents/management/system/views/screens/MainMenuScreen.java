@@ -39,7 +39,7 @@ public class MainMenuScreen extends JFrame {
         panel.add(GenericButton.create(
             "Cadastrar novo documento",
             Color.BLUE,
-            e -> {
+            _ -> {
                 new CreateDocumentScreen();
                 dispose();
             }
@@ -48,31 +48,31 @@ public class MainMenuScreen extends JFrame {
         panel.add(GenericButton.create(
             "Listar documentos cadastrados",
             Color.BLACK,
-            e -> {}
+            _ -> {}
         ));
 
         panel.add(GenericButton.create(
             "Buscar por palavra-chave",
             Color.BLACK,
-            e -> {}
+            _ -> {}
         ));
 
         panel.add(GenericButton.create(
             "Ver estatísticas e ordenações",
             Color.BLACK,
-            e -> {}
+            _ -> {}
         ));
 
         panel.add(GenericButton.create(
             "Gerenciar compressão e índices",
             Color.BLACK,
-            e -> {}
+            _ -> {}
         ));
 
         panel.add(GenericButton.create(
             "Sair",
             Color.RED,
-            e -> {
+            _ -> {
                 QuitAppDialog.create(this);
             }
         ));
