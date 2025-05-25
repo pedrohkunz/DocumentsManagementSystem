@@ -10,8 +10,8 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class MainMenu extends JFrame {
-    public MainMenu() {
+public class MainMenuScreen extends JFrame {
+    public MainMenuScreen() {
         setTitle("Gerenciador de documentos");
         setSize(GlobalVariables.SCREEN_WIDTH.getValue(), GlobalVariables.SCREEN_HEIGHT.getValue());
 
@@ -19,7 +19,7 @@ public class MainMenu extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                QuitAppDialog.create(MainMenu.this);
+                QuitAppDialog.create(MainMenuScreen.this);
             }
         });
 
@@ -39,7 +39,10 @@ public class MainMenu extends JFrame {
         panel.add(GenericButton.create(
             "Cadastrar novo documento",
             Color.BLUE,
-            e -> {}
+            e -> {
+                new CreateDocumentScreen();
+                dispose();
+            }
         ));
 
         panel.add(GenericButton.create(
