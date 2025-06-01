@@ -3,9 +3,9 @@ package com.documents.management.system.infrastructure.structures;
 import com.documents.management.system.models.Document;
 
 public class LinkedList {
-    private Node head;
-    private Node tail;
-    private int size;
+    public Node head;
+    public Node tail;
+    public int size;
 
     public LinkedList() {
         this.head = null;
