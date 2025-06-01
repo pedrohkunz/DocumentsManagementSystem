@@ -12,7 +12,7 @@ public class LinkedList {
         this.tail = null;
         this.size = 0;
     }
-    
+
     private static class Node {
         Document document;
         Node next;
@@ -24,16 +24,51 @@ public class LinkedList {
     }
 
     public void add(Document document) {
-      // a fazer
+        Node newNode = new Node(document);
+        if (head == null) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail.next = newNode;
+            tail = newNode;
+        }
+        size++;
     }
 
     public void remove(Document document) {
-          // a fazer
+        if (head == null)
+            return;
+
+        if (head.document.equals(document)) {
+            head = head.next;
+            if (head == null)
+                tail = null;
+            size--;
+            return;
+        }
+
+        Node current = head;
+        while (current.next != null) {
+            if (current.next.document.equals(document)) {
+                current.next = current.next.next;
+                if (current.next == null)
+                    tail = current;
+                size--;
+                return;
+            }
+            current = current.next;
+        }
     }
 
     public Document get(int index) {
-        // a fazer
-        return new Document();
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Índice fora do limite");
+        }
+        Node current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+        return current.document;
     }
 
     public int size() {
@@ -51,7 +86,13 @@ public class LinkedList {
     }
 
     public boolean contains(Document document) {
-        // a fazer
-        return true;
+        Node current = head;
+        while (current != null) {
+            if (current.document.equals(document)) {
+                return true;
+            }
+            current = current.next;
+        }
+        return false;
     }
 }
