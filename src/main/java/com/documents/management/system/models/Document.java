@@ -19,8 +19,8 @@ public class Document {
     private String title;
     private String content;
 
-    private static final String DOCUMENTS_FOLDER = Utils.getDocumentsDirectory() + "/DocumentsManagementSystem/";
-    private static final String DOCUMENTS_FILE_EXTENSION = ".txt";
+    public static final String DOCUMENTS_FOLDER = Utils.getDocumentsDirectory() + "/DocumentsManagementSystem/";
+    public static final String DOCUMENTS_FILE_EXTENSION = ".txt";
 
     public Document save() {
         this.validateDocument();
