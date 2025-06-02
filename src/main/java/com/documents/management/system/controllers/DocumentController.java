@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 
 import com.documents.management.system.models.Document;
 import com.documents.management.system.views.dialogs.GenericDialog;
+import com.documents.management.system.views.screens.MainMenuScreen;
 
 public class DocumentController {
     public void createDocument(String title, String content) {
@@ -15,6 +16,8 @@ public class DocumentController {
         try {
             Document document = new Document(title, content).save();
             GenericDialog.create("Documento criado com sucesso!", "Documento '" + document.getTitle() + "' cadastrado com sucesso!");
+            
+            new MainMenuScreen();
         } catch (RuntimeException e) {
             GenericDialog.create("Erro", "Erro inesperado ao cadastrar o documento.");
             throw new RuntimeException(e.getMessage(), e);
