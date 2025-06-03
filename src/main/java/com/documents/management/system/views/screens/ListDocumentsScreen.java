@@ -2,16 +2,18 @@ package com.documents.management.system.views.screens;
 
 import com.documents.management.system.common.GlobalVariables;
 import com.documents.management.system.controllers.DocumentController;
+import com.documents.management.system.infrastructure.structures.LinkedList;
 import com.documents.management.system.views.dialogs.QuitAppDialog;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
 
 public class ListDocumentsScreen extends JFrame {
-    private DocumentController documentController = DocumentController.getInstance();
+    private DocumentController documentController = new DocumentController();
+
+    LinkedList documents = documentController.getAllDocuments();
 
     public ListDocumentsScreen() {
         setTitle("Listar documentos cadastrados");
@@ -39,8 +41,6 @@ public class ListDocumentsScreen extends JFrame {
         panel.add(titleLabel);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        List<String[]> documents = documentController.getAllDocuments();
-
         if (documents == null || documents.isEmpty()) {
             JLabel noDocumentsLabel = new JLabel("Nenhum documento cadastrado.");
             noDocumentsLabel.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -48,10 +48,12 @@ public class ListDocumentsScreen extends JFrame {
             panel.add(noDocumentsLabel);
         } else {
             String[] columnNames = {"Nome do Documento", "Conteúdo"};
-            String[][] data = documents.toArray(new String[0][0]);
+            String[][] data = documents.toMatrix();
+            
             JTable table = new JTable(data, columnNames);
             table.setFillsViewportHeight(true);
             table.setRowHeight(30);
+            table.setEnabled(false);
             table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
             table.setFont(new Font("Arial", Font.PLAIN, 12));
 

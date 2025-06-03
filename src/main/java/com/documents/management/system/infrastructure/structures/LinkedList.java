@@ -95,4 +95,18 @@ public class LinkedList {
         }
         return false;
     }
+
+    public String[][] toMatrix() {
+        String[][] matrix = new String[size][2];
+        Node current = head;
+        int index = 0;
+        while (current != null) {
+            matrix[index][0] = current.document.getTitle();
+            matrix[index][1] = current.document.getContent();
+            current = current.next;
+            index++;
+        }
+        return matrix;
+    }
+    
 }

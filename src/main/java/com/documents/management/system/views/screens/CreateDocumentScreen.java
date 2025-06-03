@@ -11,7 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class CreateDocumentScreen extends JFrame {
-    private DocumentController documentController = DocumentController.getInstance();
+    private DocumentController documentController = new DocumentController();
 
     public CreateDocumentScreen() {
         setTitle("Cadastrar novo documento");

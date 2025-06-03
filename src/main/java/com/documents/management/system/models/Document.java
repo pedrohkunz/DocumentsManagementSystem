@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import com.documents.management.system.common.Utils;
+import com.documents.management.system.infrastructure.structures.LinkedList;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,6 +36,32 @@ public class Document {
         }
 
         return this;
+    }
+
+    public LinkedList loadAll() {
+        LinkedList documentsList = new LinkedList();
+
+        try {
+            Files.list(Paths.get(DOCUMENTS_FOLDER))
+                .filter(path -> path.toString().endsWith(DOCUMENTS_FILE_EXTENSION))
+                .forEach(path -> {
+                    String fileName = path.getFileName().toString();
+                    String title = fileName.substring(0, fileName.length() - DOCUMENTS_FILE_EXTENSION.length());
+                    
+                    String content = "";
+                    try {
+                        content = new String(Files.readAllBytes(path));
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error reading document: " + e.getMessage(), e);
+                    }
+
+                    documentsList.add(new Document(title, content));
+                });
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading documents: " + e.getMessage(), e);
+        }
+
+        return documentsList;
     }
 
     private void validateDocument() {
