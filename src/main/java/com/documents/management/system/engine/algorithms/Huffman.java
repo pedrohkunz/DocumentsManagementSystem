@@ -2,8 +2,10 @@ package com.documents.management.system.engine.algorithms;
 
 import java.util.*;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class Huffman {
+    private static final String SEPARATOR = "::SEPARATOR::";
 
     private static class Node implements Comparable<Node> {
         char ch;
@@ -76,18 +78,19 @@ public class Huffman {
 
         Gson gson = new Gson();
         String codeMapJson = gson.toJson(codes);
-        return codeMapJson + "||" + encoded;
+        return codeMapJson + SEPARATOR + encoded;
     }
 
     public static String decode(String input) {
-        if (input == null || !input.contains("||")) return "";
+        if (input == null || !input.contains(SEPARATOR)) return "";
 
-        String[] parts = input.split("\\|\\|", 2);
+        String[] parts = input.split(SEPARATOR, 2);
         String codeMapJson = parts[0];
         String encodedData = parts[1];
 
         Gson gson = new Gson();
-        Map<String, String> invertedMap = gson.fromJson(codeMapJson, Map.class);
+        Map<String, String> invertedMap = gson.fromJson(codeMapJson, new TypeToken<Map<String, String>>(){}.getType());
+
 
         Map<String, Character> reversedMap = new HashMap<>();
         for (Map.Entry<String, String> entry : invertedMap.entrySet()) {
