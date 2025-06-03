@@ -18,7 +18,6 @@ public class DocumentController {
 
         try {
             Document document = new Document(title, content).save();
-            
             GenericDialog.create("Documento criado com sucesso!", "Documento '" + document.getTitle() + "' cadastrado com sucesso!");
             
             new MainMenuScreen();
