@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import com.documents.management.system.common.Utils;
+import com.documents.management.system.engine.algorithms.Huffman;
 import com.documents.management.system.engine.structures.LinkedList;
 
 import lombok.AllArgsConstructor;
@@ -28,8 +29,10 @@ public class Document {
         this.createDocumentsFolderIfNotExists();
 
         try {
+            String compressedContent = Huffman.compress(content);
+
             FileWriter fileWriter = new FileWriter(DOCUMENTS_FOLDER + title + DOCUMENTS_FILE_EXTENSION);
-            fileWriter.write(content);
+            fileWriter.write(compressedContent);
             fileWriter.close();
         } catch (Exception e) {
             throw new RuntimeException("Error saving document: " + e.getMessage(), e);
@@ -50,7 +53,7 @@ public class Document {
                     
                     String content = "";
                     try {
-                        content = new String(Files.readAllBytes(path));
+                        content = Huffman.decode(new String(Files.readAllBytes(path)));
                     } catch (Exception e) {
                         throw new RuntimeException("Error reading document: " + e.getMessage(), e);
                     }
