@@ -2,26 +2,26 @@ package com.documents.management.system.views.screens;
 
 import com.documents.management.system.common.GlobalVariables;
 import com.documents.management.system.controllers.DocumentController;
-import com.documents.management.system.views.components.LabeledField;
 import com.documents.management.system.views.dialogs.QuitAppDialog;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
-public class CreateDocumentScreen extends JFrame {
+public class ListDocumentsScreen extends JFrame {
     private DocumentController documentController = DocumentController.getInstance();
 
-    public CreateDocumentScreen() {
-        setTitle("Cadastrar novo documento");
+    public ListDocumentsScreen() {
+        setTitle("Listar documentos cadastrados");
         setSize(GlobalVariables.SCREEN_WIDTH.getValue(), GlobalVariables.SCREEN_HEIGHT.getValue());
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                QuitAppDialog.create(CreateDocumentScreen.this);
+                QuitAppDialog.create(ListDocumentsScreen.this);
             }
         });
 
@@ -33,38 +33,44 @@ public class CreateDocumentScreen extends JFrame {
         panel.setAlignmentY(Component.CENTER_ALIGNMENT);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel titleLabel = new JLabel("Cadastrar novo documento");
+        JLabel titleLabel = new JLabel("Documentos Cadastrados");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(titleLabel);
-        panel.add(Box.createRigidArea(new Dimension(0, 50)));
-
-        JTextField nameField = new JTextField(20);
-        panel.add(LabeledField.create("Nome do documento:", nameField));
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        JTextArea contentArea = new JTextArea(10, 20);
-        JScrollPane scrollPane = new JScrollPane(contentArea);
-        panel.add(LabeledField.create("Conteúdo do documento:", scrollPane));
+        List<String[]> documents = documentController.getAllDocuments();
+
+        if (documents == null || documents.isEmpty()) {
+            JLabel noDocumentsLabel = new JLabel("Nenhum documento cadastrado.");
+            noDocumentsLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            noDocumentsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panel.add(noDocumentsLabel);
+        } else {
+            String[] columnNames = {"Nome do Documento", "Conteúdo"};
+            String[][] data = documents.toArray(new String[0][0]);
+            JTable table = new JTable(data, columnNames);
+            table.setFillsViewportHeight(true);
+            table.setRowHeight(30);
+            table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+            table.setFont(new Font("Arial", Font.PLAIN, 12));
+
+            JScrollPane scrollPane = new JScrollPane(table);
+            scrollPane.setPreferredSize(new Dimension(500, 300));
+            scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panel.add(scrollPane);
+        }
+
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
-
-        JButton saveButton = new JButton("Cadastrar");
-        saveButton.addActionListener(_ -> {
-            documentController.createDocument(nameField.getText().trim(), contentArea.getText().trim());
-        });
-        buttonPanel.add(saveButton);
-
-        JButton cancelButton = new JButton("Cancelar");
-        cancelButton.addActionListener(_ -> {
+        JButton backButton = new JButton("Voltar");
+        backButton.addActionListener(_ -> {
             new MainMenuScreen();
             dispose();
         });
-        buttonPanel.add(cancelButton);
-
+        buttonPanel.add(backButton);
         buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
         panel.add(buttonPanel);
 
         add(panel, new GridBagConstraints());

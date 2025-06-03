@@ -48,7 +48,10 @@ public class MainMenuScreen extends JFrame {
         panel.add(GenericButton.create(
             "Listar documentos cadastrados",
             Color.BLACK,
-            _ -> {}
+            _ -> {
+                new ListDocumentsScreen();
+                dispose();
+            }
         ));
 
         panel.add(GenericButton.create(
