@@ -1,4 +1,4 @@
-package com.documents.management.system.infrastructure.structures;
+package com.documents.management.system.engine.structures;
 
 import com.documents.management.system.models.Document;
 

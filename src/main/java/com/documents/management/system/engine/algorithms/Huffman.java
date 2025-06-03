@@ -1,4 +1,4 @@
-package com.documents.management.system.infrastructure.algorithms;
+package com.documents.management.system.engine.algorithms;
 
 public class Huffman {
     public static String compress(String data) {

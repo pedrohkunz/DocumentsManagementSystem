@@ -2,7 +2,7 @@ package com.documents.management.system.views.screens;
 
 import com.documents.management.system.common.GlobalVariables;
 import com.documents.management.system.controllers.DocumentController;
-import com.documents.management.system.infrastructure.structures.LinkedList;
+import com.documents.management.system.engine.structures.LinkedList;
 import com.documents.management.system.views.dialogs.QuitAppDialog;
 
 import javax.swing.*;

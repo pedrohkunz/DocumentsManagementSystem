@@ -1,6 +1,6 @@
 package com.documents.management.system.controllers;
 
-import com.documents.management.system.infrastructure.structures.LinkedList;
+import com.documents.management.system.engine.structures.LinkedList;
 import com.documents.management.system.models.Document;
 import com.documents.management.system.views.dialogs.GenericDialog;
 import com.documents.management.system.views.screens.MainMenuScreen;
@@ -17,8 +17,8 @@ public class DocumentController {
         }
 
         try {
-            Document document = new Document(title, content).save();
-            GenericDialog.create("Documento criado com sucesso!", "Documento '" + document.getTitle() + "' cadastrado com sucesso!");
+            new Document(title, content).save();
+            GenericDialog.create("Documento criado com sucesso!", "Documento cadastrado com sucesso!");
             
             new MainMenuScreen();
         } catch (RuntimeException e) {

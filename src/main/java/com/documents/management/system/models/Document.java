@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import com.documents.management.system.common.Utils;
-import com.documents.management.system.infrastructure.structures.LinkedList;
+import com.documents.management.system.engine.structures.LinkedList;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
