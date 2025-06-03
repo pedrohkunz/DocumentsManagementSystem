@@ -91,10 +91,13 @@ public class Huffman {
         Gson gson = new Gson();
         Map<String, String> invertedMap = gson.fromJson(codeMapJson, new TypeToken<Map<String, String>>(){}.getType());
 
-
         Map<String, Character> reversedMap = new HashMap<>();
         for (Map.Entry<String, String> entry : invertedMap.entrySet()) {
-            reversedMap.put(entry.getValue(), entry.getKey().charAt(0));
+            if (entry.getKey().length() == 1) {
+                reversedMap.put(entry.getValue(), entry.getKey().charAt(0));
+            } else {
+                throw new IllegalStateException("Invalid key in key map: " + entry.getKey());
+            }
         }
 
         StringBuilder currentCode = new StringBuilder();
