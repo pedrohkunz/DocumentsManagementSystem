@@ -9,5 +9,7 @@ public class Main {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+
+        System.out.println("Ensinando o que é branch pro eduardo");
     }
 }
