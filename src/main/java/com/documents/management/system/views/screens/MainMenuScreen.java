@@ -57,7 +57,10 @@ public class MainMenuScreen extends JFrame {
         panel.add(GenericButton.create(
             "Buscar por palavra-chave",
             Color.BLACK,
-            _ -> {}
+            _ -> {
+                new SearchDocumentsScreen();
+                dispose();
+            }
         ));
 
         panel.add(GenericButton.create(
