@@ -66,13 +66,19 @@ public class MainMenuScreen extends JFrame {
         panel.add(GenericButton.create(
             "Ver estatísticas e ordenações",
             Color.BLACK,
-            _ -> {}
+            _ -> {
+                new StatisticsAndSortScreen();
+                dispose();
+            }
         ));
 
         panel.add(GenericButton.create(
             "Gerenciar compressão e índices",
             Color.BLACK,
-            _ -> {}
+            _ -> {
+                new StructureManagementScreen();
+                dispose();
+            }
         ));
 
         panel.add(GenericButton.create(
