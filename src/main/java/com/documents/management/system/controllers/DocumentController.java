@@ -50,4 +50,7 @@ public class DocumentController {
         return true;
     }
 
+     public LinkedList searchDocuments(String keyword) {
+        return documentModel.searchByKeyword(keyword);
+    }
 }

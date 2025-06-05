@@ -57,19 +57,37 @@ public class MainMenuScreen extends JFrame {
         panel.add(GenericButton.create(
             "Buscar por palavra-chave",
             Color.BLACK,
-            _ -> {}
+            _ -> {
+                new SearchDocumentsScreen();
+                dispose();
+            }
         ));
 
         panel.add(GenericButton.create(
             "Ver estatísticas e ordenações",
             Color.BLACK,
-            _ -> {}
+            _ -> {
+                new StatisticsAndSortScreen();
+                dispose();
+            }
         ));
 
         panel.add(GenericButton.create(
             "Gerenciar compressão e índices",
             Color.BLACK,
-            _ -> {}
+            _ -> {
+                new StructureManagementScreen();
+                dispose();
+            }
+        ));
+
+        panel.add(GenericButton.create(
+            "Detalhes do documento",
+            Color.BLACK,
+            _ -> {
+                new DocumentDetailsScreen();
+                dispose();
+            }
         ));
 
         panel.add(GenericButton.create(

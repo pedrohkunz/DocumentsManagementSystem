@@ -67,6 +67,23 @@ public class Document {
         return documentsList;
     }
 
+    public LinkedList searchByKeyword(String keyword) {
+        LinkedList allDocuments = loadAll();
+        LinkedList resultList = new LinkedList();
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return resultList;
+        }
+        String lowerCaseKeyword = keyword.trim().toLowerCase();
+        for (int i = 0; i < allDocuments.size(); i++) {
+            Document doc = allDocuments.get(i);
+            if (doc.getTitle().toLowerCase().contains(lowerCaseKeyword) || 
+                doc.getContent().toLowerCase().contains(lowerCaseKeyword)) {
+                resultList.add(doc);
+            }
+        }
+        return resultList;
+    }
+
     private void validateDocument() {
         if (title == null || title.isEmpty()) {
             throw new IllegalArgumentException("Title cannot be null or empty");
