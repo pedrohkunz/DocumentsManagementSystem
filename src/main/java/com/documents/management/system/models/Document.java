@@ -6,7 +6,9 @@ import java.nio.file.Paths;
 
 import com.documents.management.system.common.Utils;
 import com.documents.management.system.engine.algorithms.Huffman;
-import com.documents.management.system.engine.structures.LinkedList;
+import com.documents.management.system.engine.singletons.DocumentBtreePlusSingleton;
+import com.documents.management.system.engine.structures.BtreePlus;
+import com.documents.management.system.engine.structures.CustomLinkedList;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +19,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Document {
+public class Document implements Comparable<Document> {
     private String title;
     private String content;
 
@@ -34,6 +36,9 @@ public class Document {
             FileWriter fileWriter = new FileWriter(DOCUMENTS_FOLDER + title + DOCUMENTS_FILE_EXTENSION);
             fileWriter.write(compressedContent);
             fileWriter.close();
+
+            BtreePlus<Document> tree = DocumentBtreePlusSingleton.getInstance();
+            tree.insert(this);
         } catch (Exception e) {
             throw new RuntimeException("Error saving document: " + e.getMessage(), e);
         }
@@ -41,8 +46,38 @@ public class Document {
         return this;
     }
 
-    public LinkedList loadAll() {
-        LinkedList documentsList = new LinkedList();
+    public CustomLinkedList<Document> readAllFromBtreePlus() {
+        BtreePlus<Document> tree = DocumentBtreePlusSingleton.getInstance();
+        CustomLinkedList<Document> documentsList = new CustomLinkedList<Document>();
+
+        try {
+            documentsList = tree.toLinkedList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error reading tree: " + e.getMessage(), e);
+        }
+
+        return documentsList;
+    }
+
+    public CustomLinkedList<Document> searchByKeyword(String keyword) {
+        CustomLinkedList<Document> allDocuments = readAllFromBtreePlus();
+        CustomLinkedList<Document> resultList = new CustomLinkedList<Document>();
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return resultList;
+        }
+        String lowerCaseKeyword = keyword.trim().toLowerCase();
+        for (int i = 0; i < allDocuments.size(); i++) {
+            Document doc = allDocuments.get(i);
+            if (doc.getTitle().toLowerCase().contains(lowerCaseKeyword) || 
+                doc.getContent().toLowerCase().contains(lowerCaseKeyword)) {
+                resultList.add(doc);
+            }
+        }
+        return resultList;
+    }
+
+    public static void loadAllInBtreePlus() {
+        BtreePlus<Document> tree = new BtreePlus<Document>();
 
         try {
             Files.list(Paths.get(DOCUMENTS_FOLDER))
@@ -58,30 +93,13 @@ public class Document {
                         throw new RuntimeException("Error reading document: " + e.getMessage(), e);
                     }
 
-                    documentsList.add(new Document(title, content));
+                    tree.insert(new Document(title, content));
                 });
         } catch (Exception e) {
             throw new RuntimeException("Error loading documents: " + e.getMessage(), e);
         }
 
-        return documentsList;
-    }
-
-    public LinkedList searchByKeyword(String keyword) {
-        LinkedList allDocuments = loadAll();
-        LinkedList resultList = new LinkedList();
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return resultList;
-        }
-        String lowerCaseKeyword = keyword.trim().toLowerCase();
-        for (int i = 0; i < allDocuments.size(); i++) {
-            Document doc = allDocuments.get(i);
-            if (doc.getTitle().toLowerCase().contains(lowerCaseKeyword) || 
-                doc.getContent().toLowerCase().contains(lowerCaseKeyword)) {
-                resultList.add(doc);
-            }
-        }
-        return resultList;
+        DocumentBtreePlusSingleton.setInstance(tree);
     }
 
     private void validateDocument() {
@@ -106,5 +124,13 @@ public class Document {
                 throw new RuntimeException("Error creating documents folder: " + e.getMessage(), e);
             }
         }
+    }
+
+    @Override
+    public int compareTo(Document otherDocument) {
+        if (this.title == null && otherDocument.title == null) return 0;
+        if (this.title == null) return -1;
+        if (otherDocument.title == null) return 1;
+        return this.title.compareTo(otherDocument.title);
     }
 }

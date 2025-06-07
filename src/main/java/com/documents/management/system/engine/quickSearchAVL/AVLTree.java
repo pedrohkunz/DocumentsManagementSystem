@@ -30,27 +30,23 @@ public class AVLTree<T extends Comparable<T>> {
         else if (key.compareTo(node.key) > 0)
             node.right = insertRec(node.right, key);
         else
-            return node; // Duplicates not allowed
+            return node; 
 
         node.height = 1 + Math.max(height(node.left), height(node.right));
 
         int balance = getBalance(node);
 
-        // Left Left
         if (balance > 1 && key.compareTo(node.left.key) < 0)
             return rightRotate(node);
 
-        // Right Right
         if (balance < -1 && key.compareTo(node.right.key) > 0)
             return leftRotate(node);
 
-        // Left Right
         if (balance > 1 && key.compareTo(node.left.key) > 0) {
             node.left = leftRotate(node.left);
             return rightRotate(node);
         }
 
-        // Right Left
         if (balance < -1 && key.compareTo(node.right.key) < 0) {
             node.right = rightRotate(node.right);
             return leftRotate(node);
@@ -97,7 +93,6 @@ public class AVLTree<T extends Comparable<T>> {
         return y;
     }
 
-    // Busca
     public boolean contains(T key) {
         return containsRec(root, key);
     }
@@ -113,7 +108,6 @@ public class AVLTree<T extends Comparable<T>> {
             return true;
     }
 
-    // Percurso em ordem (palavras ordenadas)
     public void inOrder() {
         inOrderRec(root);
     }

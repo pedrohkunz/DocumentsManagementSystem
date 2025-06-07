@@ -2,7 +2,8 @@ package com.documents.management.system.views.screens;
 
 import com.documents.management.system.common.GlobalVariables;
 import com.documents.management.system.controllers.DocumentController;
-import com.documents.management.system.engine.structures.LinkedList;
+import com.documents.management.system.engine.structures.CustomLinkedList;
+import com.documents.management.system.models.Document;
 import com.documents.management.system.views.dialogs.QuitAppDialog;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ import java.awt.event.WindowEvent;
 public class ListDocumentsScreen extends JFrame {
     private DocumentController documentController = new DocumentController();
 
-    LinkedList documents = documentController.getAllDocuments();
+    CustomLinkedList<Document> documents = documentController.getAllDocuments();
 
     public ListDocumentsScreen() {
         setTitle("Listar documentos cadastrados");

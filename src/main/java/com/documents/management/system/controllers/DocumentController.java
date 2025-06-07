@@ -1,6 +1,6 @@
 package com.documents.management.system.controllers;
 
-import com.documents.management.system.engine.structures.LinkedList;
+import com.documents.management.system.engine.structures.CustomLinkedList;
 import com.documents.management.system.models.Document;
 import com.documents.management.system.views.dialogs.GenericDialog;
 import com.documents.management.system.views.screens.MainMenuScreen;
@@ -27,8 +27,8 @@ public class DocumentController {
         }
     }
 
-    public LinkedList getAllDocuments() {
-        return documentModel.loadAll();
+    public CustomLinkedList<Document> getAllDocuments() {
+        return documentModel.readAllFromBtreePlus();
     }
 
     private Boolean isValidFields(String title, String content) {
@@ -50,7 +50,7 @@ public class DocumentController {
         return true;
     }
 
-     public LinkedList searchDocuments(String keyword) {
+     public CustomLinkedList<Document> searchDocuments(String keyword) {
         return documentModel.searchByKeyword(keyword);
     }
 }

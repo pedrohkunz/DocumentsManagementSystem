@@ -2,29 +2,29 @@ package com.documents.management.system.engine.structures;
 
 import com.documents.management.system.models.Document;
 
-public class LinkedList {
-    public Node head;
-    public Node tail;
+public class CustomLinkedList<T> {
+    public Node<T> head;
+    public Node<T> tail;
     public int size;
 
-    public LinkedList() {
+    public CustomLinkedList() {
         this.head = null;
         this.tail = null;
         this.size = 0;
     }
 
-    private static class Node {
-        Document document;
-        Node next;
+    private static class Node<T> {
+        T value;
+        Node<T> next;
 
-        Node(Document document) {
-            this.document = document;
+        Node(T value) {
+            this.value = value;
             this.next = null;
         }
     }
 
-    public void add(Document document) {
-        Node newNode = new Node(document);
+    public void add(T value) {
+        Node<T> newNode = new Node<T>(value);
         if (head == null) {
             head = newNode;
             tail = newNode;
@@ -35,11 +35,11 @@ public class LinkedList {
         size++;
     }
 
-    public void remove(Document document) {
+    public void remove(T value) {
         if (head == null)
             return;
 
-        if (head.document.equals(document)) {
+        if (head.value.equals(value)) {
             head = head.next;
             if (head == null)
                 tail = null;
@@ -47,9 +47,9 @@ public class LinkedList {
             return;
         }
 
-        Node current = head;
+        Node<T> current = head;
         while (current.next != null) {
-            if (current.next.document.equals(document)) {
+            if (current.next.value.equals(value)) {
                 current.next = current.next.next;
                 if (current.next == null)
                     tail = current;
@@ -60,15 +60,15 @@ public class LinkedList {
         }
     }
 
-    public Document get(int index) {
+    public T get(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index out of bounds: " + index);
         }
-        Node current = head;
+        Node<T> current = head;
         for (int i = 0; i < index; i++) {
             current = current.next;
         }
-        return current.document;
+        return current.value;
     }
 
     public int size() {
@@ -85,10 +85,10 @@ public class LinkedList {
         size = 0;
     }
 
-    public boolean contains(Document document) {
-        Node current = head;
+    public boolean contains(T value) {
+        Node<T> current = head;
         while (current != null) {
-            if (current.document.equals(document)) {
+            if (current.value.equals(value)) {
                 return true;
             }
             current = current.next;
@@ -98,14 +98,22 @@ public class LinkedList {
 
     public String[][] toMatrix() {
         String[][] matrix = new String[size][2];
-        Node current = head;
+        Node<T> current = head;
         int index = 0;
+
         while (current != null) {
-            matrix[index][0] = current.document.getTitle();
-            matrix[index][1] = current.document.getContent();
+            if (current.value instanceof Document) {
+                Document doc = (Document) current.value;
+                matrix[index][0] = doc.getTitle();
+                matrix[index][1] = doc.getContent();
+            } else {
+                matrix[index][0] = current.value.toString();
+                matrix[index][1] = "";
+            }
             current = current.next;
             index++;
         }
+
         return matrix;
     }
     

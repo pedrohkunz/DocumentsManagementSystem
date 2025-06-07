@@ -2,7 +2,7 @@ package com.documents.management.system.views.screens;
 
 import com.documents.management.system.common.GlobalVariables;
 import com.documents.management.system.controllers.DocumentController;
-import com.documents.management.system.engine.structures.LinkedList;
+import com.documents.management.system.engine.structures.CustomLinkedList;
 import com.documents.management.system.models.Document;
 import com.documents.management.system.views.components.LabeledField;
 import com.documents.management.system.views.dialogs.QuitAppDialog;
@@ -81,7 +81,7 @@ public class SearchDocumentsScreen extends JFrame {
     private void updateResults(String keyword) {
         resultsPanel.removeAll();
 
-        LinkedList documents = documentController.searchDocuments(keyword);
+        CustomLinkedList<Document> documents = documentController.searchDocuments(keyword);
         List<String[]> documentList = new ArrayList<>();
         for (int i = 0; i < documents.size(); i++) {
             Document doc = documents.get(i);

@@ -12,6 +12,7 @@ import java.awt.event.WindowEvent;
 
 public class MainMenuScreen extends JFrame {
     public MainMenuScreen() {
+        
         setTitle("Gerenciador de documentos");
         setSize(GlobalVariables.SCREEN_WIDTH.getValue(), GlobalVariables.SCREEN_HEIGHT.getValue());
 

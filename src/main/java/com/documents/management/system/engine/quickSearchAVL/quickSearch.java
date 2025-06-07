@@ -11,7 +11,6 @@ public class quickSearch {
     static String userHome = System.getProperty("user.home");
     static String directory = userHome + "\\Documents\\DocumentsManagementSystem";
 
-    // TESTE
     public static void main(String[] args) throws IOException {
     showWordsByFile();
     searchWordInFiles("bola");
