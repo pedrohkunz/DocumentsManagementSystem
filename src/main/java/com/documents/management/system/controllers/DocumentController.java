@@ -50,7 +50,7 @@ public class DocumentController {
         return true;
     }
 
-     public CustomLinkedList<Document> searchDocuments(String keyword) {
-        return documentModel.searchByKeyword(keyword);
+     public CustomLinkedList<Document> searchDocuments(String keyword, String selectedSearchMethod) {
+        return documentModel.searchByKeyword(keyword, selectedSearchMethod);
     }
 }

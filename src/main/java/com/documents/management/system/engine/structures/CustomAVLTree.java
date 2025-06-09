@@ -1,8 +1,8 @@
-package com.documents.management.system.engine.quickSearchAVL;
+package com.documents.management.system.engine.structures;
 
 import java.util.List;
 
-public class AVLTree<T extends Comparable<T>> {
+public class CustomAVLTree<T extends Comparable<T>> {
 
     private class Node {
         T key;

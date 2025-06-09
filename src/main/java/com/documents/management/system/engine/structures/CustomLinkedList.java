@@ -116,5 +116,13 @@ public class CustomLinkedList<T> {
 
         return matrix;
     }
+
+    public void forEach(java.util.function.Consumer<? super T> action) {
+        Node<T> current = head;
+        while (current != null) {
+            action.accept(current.value);
+            current = current.next;
+        }
+    }
     
 }

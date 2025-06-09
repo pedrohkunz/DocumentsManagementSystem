@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 public class SearchDocumentsScreen extends JFrame {
@@ -44,19 +45,51 @@ public class SearchDocumentsScreen extends JFrame {
         panel.add(titleLabel);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
+        JLabel searchMethod = new JLabel("Como você gostaria de buscar os documentos?");
+        searchMethod.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(searchMethod);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        JRadioButton searchInBTree = new JRadioButton("BTree");
+        searchInBTree.setSelected(true);
+        searchInBTree.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JRadioButton searchInAVLTree = new JRadioButton("AVLTree");
+        searchInAVLTree.setSelected(false);
+        searchInAVLTree.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // JRadioButton searchWithRelevanceIndex = new JRadioButton("");
+        // searchWithRelevanceIndex.setSelected(false);
+        // searchWithRelevanceIndex.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        ButtonGroup group = new ButtonGroup();
+        group.add(searchInBTree);
+        group.add(searchInAVLTree);
+        //group.add(searchWithRelevanceIndex);
+
+        panel.add(searchInBTree);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        panel.add(searchInAVLTree);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        //panel.add(searchWithRelevanceIndex);
+        //panel.add(Box.createRigidArea(new Dimension(0, 20)));
+
         JTextField searchField = new JTextField(20);
         panel.add(LabeledField.create("Palavra-chave:", searchField));
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         JButton searchButton = new JButton("Pesquisar");
-        searchButton.addActionListener(_ -> updateResults(searchField.getText().trim()));
+        searchButton.addActionListener(_ -> updateResults(searchField.getText().trim(), group));
         panel.add(searchButton);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         resultsPanel = new JPanel();
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
+        resultsPanel.setAutoscrolls(rootPaneCheckingEnabled);
         resultsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        updateResults("");
+        updateResults("", group);
         panel.add(resultsPanel);
 
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -78,10 +111,19 @@ public class SearchDocumentsScreen extends JFrame {
         setVisible(true);
     }
 
-    private void updateResults(String keyword) {
+    private void updateResults(String keyword, ButtonGroup group) {
         resultsPanel.removeAll();
 
-        CustomLinkedList<Document> documents = documentController.searchDocuments(keyword);
+        String selectedSearchMethod = null;
+        for (Enumeration<AbstractButton> buttons = group.getElements(); buttons.hasMoreElements();) {
+            AbstractButton button = buttons.nextElement();
+            if (button.isSelected()) {
+                selectedSearchMethod = button.getText();
+                break;
+            }
+        }
+
+        CustomLinkedList<Document> documents = documentController.searchDocuments(keyword, selectedSearchMethod);
         List<String[]> documentList = new ArrayList<>();
         for (int i = 0; i < documents.size(); i++) {
             Document doc = documents.get(i);
@@ -94,17 +136,23 @@ public class SearchDocumentsScreen extends JFrame {
             noDocumentsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
             resultsPanel.add(noDocumentsLabel);
         } else {
+            JLabel resultsLabel = new JLabel("Arquivos que possuem a palavra-chave no conteúdo:");
+            resultsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            resultsPanel.add(resultsLabel);
+
             String[] columnNames = {"Nome do Documento", "Conteúdo"};
             String[][] data = documentList.toArray(new String[0][0]);
             JTable table = new JTable(data, columnNames);
             table.setFillsViewportHeight(true);
             table.setRowHeight(30);
+            table.setEnabled(false);
             table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
             table.setFont(new Font("Arial", Font.PLAIN, 12));
 
             JScrollPane scrollPane = new JScrollPane(table);
-            scrollPane.setPreferredSize(new Dimension(500, 300));
+            scrollPane.setPreferredSize(new Dimension(100, 100));
             scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+
             resultsPanel.add(scrollPane);
         }
 

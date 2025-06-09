@@ -1,13 +1,15 @@
 package com.documents.management.system.models;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import com.documents.management.system.common.Utils;
 import com.documents.management.system.engine.algorithms.Huffman;
 import com.documents.management.system.engine.singletons.DocumentBtreePlusSingleton;
-import com.documents.management.system.engine.structures.BtreePlus;
+import com.documents.management.system.engine.structures.CustomAVLTree;
+import com.documents.management.system.engine.structures.CustomBtreePlus;
+import com.documents.management.system.engine.structures.CustomHashMap;
 import com.documents.management.system.engine.structures.CustomLinkedList;
 
 import lombok.AllArgsConstructor;
@@ -37,7 +39,7 @@ public class Document implements Comparable<Document> {
             fileWriter.write(compressedContent);
             fileWriter.close();
 
-            BtreePlus<Document> tree = DocumentBtreePlusSingleton.getInstance();
+            CustomBtreePlus<Document> tree = DocumentBtreePlusSingleton.getInstance();
             tree.insert(this);
         } catch (Exception e) {
             throw new RuntimeException("Error saving document: " + e.getMessage(), e);
@@ -47,7 +49,7 @@ public class Document implements Comparable<Document> {
     }
 
     public CustomLinkedList<Document> readAllFromBtreePlus() {
-        BtreePlus<Document> tree = DocumentBtreePlusSingleton.getInstance();
+        CustomBtreePlus<Document> tree = DocumentBtreePlusSingleton.getInstance();
         CustomLinkedList<Document> documentsList = new CustomLinkedList<Document>();
 
         try {
@@ -59,25 +61,70 @@ public class Document implements Comparable<Document> {
         return documentsList;
     }
 
-    public CustomLinkedList<Document> searchByKeyword(String keyword) {
-        CustomLinkedList<Document> allDocuments = readAllFromBtreePlus();
-        CustomLinkedList<Document> resultList = new CustomLinkedList<Document>();
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return resultList;
+    public CustomLinkedList<Document> searchByKeyword(String keyword, String selectedSearchMethod) {
+        if(selectedSearchMethod == "AVLTree") {
+            return quickSearchAVL(keyword);
         }
-        String lowerCaseKeyword = keyword.trim().toLowerCase();
-        for (int i = 0; i < allDocuments.size(); i++) {
-            Document doc = allDocuments.get(i);
-            if (doc.getTitle().toLowerCase().contains(lowerCaseKeyword) || 
-                doc.getContent().toLowerCase().contains(lowerCaseKeyword)) {
-                resultList.add(doc);
+
+        if(selectedSearchMethod == "BTree") {
+            return quickSearchBtree(keyword);
+        }
+
+        return quickSearchBtreePlus(keyword);
+    }
+
+    private CustomLinkedList<Document> quickSearchAVL(String keyword) {
+        CustomLinkedList<Document> documents = new CustomLinkedList<Document>();
+
+        CustomHashMap<Document, CustomAVLTree<String>> wordsByFiles = indexWordsByDocumentFromAvlTree();
+        wordsByFiles.forEach((document, words) -> {
+            if (words.contains(keyword)) {
+                documents.add(document);
+            }
+        });
+    
+        return documents;
+    }
+
+     private CustomHashMap<Document, CustomAVLTree<String>> indexWordsByDocumentFromAvlTree() {
+        CustomHashMap<Document, CustomAVLTree<String>> wordsByFiles = new CustomHashMap<Document, CustomAVLTree<String>>();
+
+        CustomBtreePlus<Document> tree = DocumentBtreePlusSingleton.getInstance();
+        tree.toLinkedList().forEach(document -> {
+            CustomAVLTree<String> words = extractWords(document.getContent());
+            wordsByFiles.put(document, words);
+        });
+
+        return wordsByFiles;
+    }
+
+    private CustomAVLTree<String> extractWords(String content) {
+        CustomAVLTree<String> tree = new CustomAVLTree<String>();
+        
+        if (content == null || content.isEmpty()) {
+            return tree;
+        }
+
+        String[] words = content.split("[\\s\\p{Punct}]+");
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                tree.insert(word.toLowerCase());
             }
         }
-        return resultList;
+
+        return tree;
+    }
+
+    private CustomLinkedList<Document> quickSearchBtree(String keyword) {
+        return new CustomLinkedList<>(); // todo
+    }
+
+    private CustomLinkedList<Document> quickSearchBtreePlus(String keyword) {
+        return new CustomLinkedList<Document>(); // todo
     }
 
     public static void loadAllInBtreePlus() {
-        BtreePlus<Document> tree = new BtreePlus<Document>();
+        CustomBtreePlus<Document> tree = new CustomBtreePlus<Document>();
 
         try {
             Files.list(Paths.get(DOCUMENTS_FOLDER))

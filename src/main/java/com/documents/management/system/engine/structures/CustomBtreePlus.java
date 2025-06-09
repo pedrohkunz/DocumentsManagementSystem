@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BtreePlus<T extends Comparable<T>> {
+public class CustomBtreePlus<T extends Comparable<T>> {
     private static final int DEFAULT_ORDER = 3;
 
     private final int order;
     private Node root;
 
-    public BtreePlus() {
+    public CustomBtreePlus() {
         this(DEFAULT_ORDER);
     }
 
-    public BtreePlus(int order) {
+    public CustomBtreePlus(int order) {
         this.order = order;
         this.root = new LeafNode();
     }
@@ -221,4 +221,5 @@ public class BtreePlus<T extends Comparable<T>> {
 
         return null;
     }
+    
 }

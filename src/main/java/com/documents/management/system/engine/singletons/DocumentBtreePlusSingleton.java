@@ -1,28 +1,28 @@
 package com.documents.management.system.engine.singletons;
 
-import com.documents.management.system.engine.structures.BtreePlus;
+import com.documents.management.system.engine.structures.CustomBtreePlus;
 import com.documents.management.system.models.Document;
 
 public class DocumentBtreePlusSingleton {
-    private static BtreePlus<Document> instance;
+    private static CustomBtreePlus<Document> instance;
 
     private DocumentBtreePlusSingleton() {
 
     }
 
-    public static BtreePlus<Document> getInstance() {
+    public static CustomBtreePlus<Document> getInstance() {
         if (instance == null) {
-            instance = new BtreePlus<Document>();
+            instance = new CustomBtreePlus<Document>();
         }
 
         return instance;
     }
 
     public static void resetInstance() {
-        instance = new BtreePlus<Document>();
+        instance = new CustomBtreePlus<Document>();
     }
 
-    public static void setInstance(BtreePlus<Document> btreePlus) {
+    public static void setInstance(CustomBtreePlus<Document> btreePlus) {
         instance = btreePlus;
     }
 }
