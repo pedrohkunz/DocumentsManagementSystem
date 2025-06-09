@@ -120,15 +120,23 @@ public class CustomAVLTree<T extends Comparable<T>> {
         }
     }
 
-    public void addAllToList(List<T> lista) {
+    public void addAllToList(CustomLinkedList<T> lista) {
         addAllToListRec(root, lista);
     }
 
-    private void addAllToListRec(Node node, List<T> lista) {
+    private void addAllToListRec(Node node, CustomLinkedList<T> list) {
         if (node != null) {
-            addAllToListRec(node.left, lista);
-            lista.add(node.key);
-            addAllToListRec(node.right, lista);
+            addAllToListRec(node.left, list);
+            list.add(node.key);
+            addAllToListRec(node.right, list);
         }
+    }
+
+    public CustomLinkedList<T> toLinkedList() {
+        CustomLinkedList<T> list = new CustomLinkedList<>();
+        
+        addAllToList(list);
+        
+        return list;
     }
 }

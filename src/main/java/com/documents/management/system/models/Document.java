@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import com.documents.management.system.common.Utils;
 import com.documents.management.system.engine.algorithms.Huffman;
+import com.documents.management.system.engine.singletons.DocumentAVLTreeSingleton;
 import com.documents.management.system.engine.singletons.DocumentBtreePlusSingleton;
 import com.documents.management.system.engine.structures.CustomAVLTree;
 import com.documents.management.system.engine.structures.CustomBtreePlus;
@@ -39,8 +40,11 @@ public class Document implements Comparable<Document> {
             fileWriter.write(compressedContent);
             fileWriter.close();
 
-            CustomBtreePlus<Document> tree = DocumentBtreePlusSingleton.getInstance();
-            tree.insert(this);
+            CustomBtreePlus<Document> btreePlus = DocumentBtreePlusSingleton.getInstance();
+            btreePlus.insert(this);
+
+            CustomAVLTree<Document> avlTree = DocumentAVLTreeSingleton.getInstance();
+            avlTree.insert(this);
         } catch (Exception e) {
             throw new RuntimeException("Error saving document: " + e.getMessage(), e);
         }
@@ -89,7 +93,7 @@ public class Document implements Comparable<Document> {
      private CustomHashMap<Document, CustomAVLTree<String>> indexWordsByDocumentFromAvlTree() {
         CustomHashMap<Document, CustomAVLTree<String>> wordsByFiles = new CustomHashMap<Document, CustomAVLTree<String>>();
 
-        CustomBtreePlus<Document> tree = DocumentBtreePlusSingleton.getInstance();
+        CustomAVLTree<Document> tree = DocumentAVLTreeSingleton.getInstance();
         tree.toLinkedList().forEach(document -> {
             CustomAVLTree<String> words = extractWords(document.getContent());
             wordsByFiles.put(document, words);
@@ -147,6 +151,32 @@ public class Document implements Comparable<Document> {
         }
 
         DocumentBtreePlusSingleton.setInstance(tree);
+    }
+
+    public static void loadAllInAVLTree() {
+        CustomAVLTree<Document> tree = new CustomAVLTree<Document>();
+
+        try {
+            Files.list(Paths.get(DOCUMENTS_FOLDER))
+                .filter(path -> path.toString().endsWith(DOCUMENTS_FILE_EXTENSION))
+                .forEach(path -> {
+                    String fileName = path.getFileName().toString();
+                    String title = fileName.substring(0, fileName.length() - DOCUMENTS_FILE_EXTENSION.length());
+                    
+                    String content = "";
+                    try {
+                        content = Huffman.decode(new String(Files.readAllBytes(path)));
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error reading document: " + e.getMessage(), e);
+                    }
+
+                    tree.insert(new Document(title, content));
+                });
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading documents: " + e.getMessage(), e);
+        }
+
+        DocumentAVLTreeSingleton.setInstance(tree);
     }
 
     private void validateDocument() {

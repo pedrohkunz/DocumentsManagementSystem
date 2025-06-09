@@ -7,6 +7,8 @@ public class Main {
     public static void main(String[] args) {
         try {
             Document.loadAllInBtreePlus();
+            Document.loadAllInAVLTree();
+            
             new MainMenuScreen();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
