@@ -8,6 +8,8 @@ import com.documents.management.system.engine.algorithms.Huffman;
 import com.documents.management.system.engine.singletons.DocumentAVLTreeSingleton;
 import com.documents.management.system.engine.singletons.DocumentBTreeSingleton;
 import com.documents.management.system.engine.singletons.DocumentBtreePlusSingleton;
+import com.documents.management.system.engine.singletons.DocumentHashMapSingleton;
+import com.documents.management.system.engine.singletons.DocumentLinkedListSingleton;
 import com.documents.management.system.engine.structures.CustomAVLTree;
 import com.documents.management.system.engine.structures.CustomBTree;
 import com.documents.management.system.engine.structures.CustomBtreePlus;
@@ -49,6 +51,12 @@ public class Document implements Comparable<Document> {
 
             CustomBTree<Document> btree = DocumentBTreeSingleton.getInstance();
             btree.insert(this);
+
+            CustomHashMap<String, Document> documentsMap = DocumentHashMapSingleton.getInstance();
+            documentsMap.put(title, this);
+            
+            CustomLinkedList<Document> documentsList = DocumentLinkedListSingleton.getInstance();
+            documentsList.add(this);
         } catch (Exception e) {
             throw new RuntimeException("Error saving document: " + e.getMessage(), e);
         }
@@ -244,6 +252,59 @@ public class Document implements Comparable<Document> {
         }
 
         DocumentBTreeSingleton.setInstance(tree);
+    }
+
+    public static void loadAllInHashMap() {
+        CustomHashMap<String, Document> documentsMap = new CustomHashMap<String, Document>();
+
+        try {
+            Files.list(Paths.get(DOCUMENTS_FOLDER))
+                .filter(path -> path.toString().endsWith(DOCUMENTS_FILE_EXTENSION))
+                .forEach(path -> {
+                    String fileName = path.getFileName().toString();
+                    String title = fileName.substring(0, fileName.length() - DOCUMENTS_FILE_EXTENSION.length());
+                    
+                    String content = "";
+                    try {
+                        content = Huffman.decode(new String(Files.readAllBytes(path)));
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error reading document: " + e.getMessage(), e);
+                    }
+
+                    documentsMap.put(title, new Document(title, content));
+                });
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading documents: " + e.getMessage(), e);
+        }
+
+        
+        DocumentHashMapSingleton.setInstance(documentsMap);
+    }
+
+    public static void loadAllInLinkedList() {
+        CustomLinkedList<Document> documentsList = new CustomLinkedList<Document>();
+
+        try {
+            Files.list(Paths.get(DOCUMENTS_FOLDER))
+                .filter(path -> path.toString().endsWith(DOCUMENTS_FILE_EXTENSION))
+                .forEach(path -> {
+                    String fileName = path.getFileName().toString();
+                    String title = fileName.substring(0, fileName.length() - DOCUMENTS_FILE_EXTENSION.length());
+                    
+                    String content = "";
+                    try {
+                        content = Huffman.decode(new String(Files.readAllBytes(path)));
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error reading document: " + e.getMessage(), e);
+                    }
+
+                    documentsList.add(new Document(title, content));
+                });
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading documents: " + e.getMessage(), e);
+        }
+
+        DocumentLinkedListSingleton.setInstance(documentsList);
     }
 
     private void validateDocument() {

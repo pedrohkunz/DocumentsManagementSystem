@@ -9,6 +9,8 @@ public class Main {
             Document.loadAllInBtreePlus();
             Document.loadAllInAVLTree();
             Document.loadAllInBtree();
+            Document.loadAllInHashMap();
+            Document.loadAllInLinkedList();
 
             new MainMenuScreen();
         } catch (Exception e) {
