@@ -54,7 +54,7 @@ public class Document implements Comparable<Document> {
 
             CustomHashMap<String, Document> documentsMap = DocumentHashMapSingleton.getInstance();
             documentsMap.put(title, this);
-            
+
             CustomLinkedList<Document> documentsList = DocumentLinkedListSingleton.getInstance();
             documentsList.add(this);
         } catch (Exception e) {
@@ -81,12 +81,8 @@ public class Document implements Comparable<Document> {
         if(selectedSearchMethod == "AVLTree") {
             return quickSearchAVL(keyword);
         }
-
-        if(selectedSearchMethod == "BTree") {
-            return quickSearchBtree(keyword);
-        }
-
-        return quickSearchBtreePlus(keyword);
+        
+        return quickSearchBtree(keyword);
     }
 
     private CustomLinkedList<Document> quickSearchAVL(String keyword) {
@@ -171,10 +167,6 @@ public class Document implements Comparable<Document> {
         }
 
         return tree;
-    }
-
-    private CustomLinkedList<Document> quickSearchBtreePlus(String keyword) {
-        return new CustomLinkedList<Document>(); // todo
     }
 
     public static void loadAllInBtreePlus() {
