@@ -8,7 +8,8 @@ public class Main {
         try {
             Document.loadAllInBtreePlus();
             Document.loadAllInAVLTree();
-            
+            Document.loadAllInBtree();
+
             new MainMenuScreen();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);

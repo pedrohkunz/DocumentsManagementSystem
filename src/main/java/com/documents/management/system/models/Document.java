@@ -1,14 +1,15 @@
 package com.documents.management.system.models;
 
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import com.documents.management.system.common.Utils;
 import com.documents.management.system.engine.algorithms.Huffman;
 import com.documents.management.system.engine.singletons.DocumentAVLTreeSingleton;
+import com.documents.management.system.engine.singletons.DocumentBTreeSingleton;
 import com.documents.management.system.engine.singletons.DocumentBtreePlusSingleton;
 import com.documents.management.system.engine.structures.CustomAVLTree;
+import com.documents.management.system.engine.structures.CustomBTree;
 import com.documents.management.system.engine.structures.CustomBtreePlus;
 import com.documents.management.system.engine.structures.CustomHashMap;
 import com.documents.management.system.engine.structures.CustomLinkedList;
@@ -45,6 +46,9 @@ public class Document implements Comparable<Document> {
 
             CustomAVLTree<Document> avlTree = DocumentAVLTreeSingleton.getInstance();
             avlTree.insert(this);
+
+            CustomBTree<Document> btree = DocumentBTreeSingleton.getInstance();
+            btree.insert(this);
         } catch (Exception e) {
             throw new RuntimeException("Error saving document: " + e.getMessage(), e);
         }
@@ -90,19 +94,19 @@ public class Document implements Comparable<Document> {
         return documents;
     }
 
-     private CustomHashMap<Document, CustomAVLTree<String>> indexWordsByDocumentFromAvlTree() {
+    private CustomHashMap<Document, CustomAVLTree<String>> indexWordsByDocumentFromAvlTree() {
         CustomHashMap<Document, CustomAVLTree<String>> wordsByFiles = new CustomHashMap<Document, CustomAVLTree<String>>();
 
         CustomAVLTree<Document> tree = DocumentAVLTreeSingleton.getInstance();
         tree.toLinkedList().forEach(document -> {
-            CustomAVLTree<String> words = extractWords(document.getContent());
+            CustomAVLTree<String> words = extractWordsToAVL(document.getContent());
             wordsByFiles.put(document, words);
         });
 
         return wordsByFiles;
     }
 
-    private CustomAVLTree<String> extractWords(String content) {
+    private CustomAVLTree<String> extractWordsToAVL(String content) {
         CustomAVLTree<String> tree = new CustomAVLTree<String>();
         
         if (content == null || content.isEmpty()) {
@@ -120,7 +124,45 @@ public class Document implements Comparable<Document> {
     }
 
     private CustomLinkedList<Document> quickSearchBtree(String keyword) {
-        return new CustomLinkedList<>(); // todo
+        CustomLinkedList<Document> documents = new CustomLinkedList<Document>();
+
+        CustomHashMap<Document, CustomBTree<String>> wordsByFiles = indexWordsByDocumentFromBTree();
+        wordsByFiles.forEach((document, words) -> {
+            if (words.contains(keyword)) {
+                documents.add(document);
+            }
+        });
+    
+        return documents;
+    }
+
+    private CustomHashMap<Document, CustomBTree<String>> indexWordsByDocumentFromBTree() {
+        CustomHashMap<Document, CustomBTree<String>> wordsByFiles = new CustomHashMap<Document, CustomBTree<String>>();
+
+        CustomBTree<Document> tree = DocumentBTreeSingleton.getInstance();
+        tree.toLinkedList().forEach(document -> {
+            CustomBTree<String> words = extractWordsToBTree(document.getContent());
+            wordsByFiles.put(document, words);
+        });
+
+        return wordsByFiles;
+    }
+
+    private CustomBTree<String> extractWordsToBTree(String content) {
+        CustomBTree<String> tree = new CustomBTree<String>();
+        
+        if (content == null || content.isEmpty()) {
+            return tree;
+        }
+
+        String[] words = content.split("[\\s\\p{Punct}]+");
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                tree.insert(word.toLowerCase());
+            }
+        }
+
+        return tree;
     }
 
     private CustomLinkedList<Document> quickSearchBtreePlus(String keyword) {
@@ -177,6 +219,31 @@ public class Document implements Comparable<Document> {
         }
 
         DocumentAVLTreeSingleton.setInstance(tree);
+    }
+
+    public static void loadAllInBtree() {
+        CustomBTree<Document> tree = new CustomBTree<Document>();
+        try {
+            Files.list(Paths.get(DOCUMENTS_FOLDER))
+                .filter(path -> path.toString().endsWith(DOCUMENTS_FILE_EXTENSION))
+                .forEach(path -> {
+                    String fileName = path.getFileName().toString();
+                    String title = fileName.substring(0, fileName.length() - DOCUMENTS_FILE_EXTENSION.length());
+                    
+                    String content = "";
+                    try {
+                        content = Huffman.decode(new String(Files.readAllBytes(path)));
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error reading document: " + e.getMessage(), e);
+                    }
+
+                    tree.insert(new Document(title, content));
+                });
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading documents: " + e.getMessage(), e);
+        }
+
+        DocumentBTreeSingleton.setInstance(tree);
     }
 
     private void validateDocument() {

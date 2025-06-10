@@ -124,5 +124,60 @@ public class CustomLinkedList<T> {
             current = current.next;
         }
     }
-    
+
+    public void insertAt(int index, T value) {
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+        Node<T> newNode = new Node<>(value);
+        if (index == 0) {
+            newNode.next = head;
+            head = newNode;
+            if (size == 0) tail = newNode;
+        } else {
+            Node<T> current = head;
+            for (int i = 0; i < index - 1; i++) {
+                current = current.next;
+            }
+            newNode.next = current.next;
+            current.next = newNode;
+            if (newNode.next == null) tail = newNode;
+        }
+        size++;
+    }
+
+    public void removeLast() {
+        if (size == 0) return;
+        if (size == 1) {
+            head = null;
+            tail = null;
+        } else {
+            Node<T> current = head;
+            while (current.next != tail) {
+                current = current.next;
+            }
+            current.next = null;
+            tail = current;
+        }
+        size--;
+    }
+
+    public void removeAt(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index out of bounds: " + index);
+        }
+
+        if (index == 0) {
+            head = head.next;
+            if (head == null) tail = null;
+        } else {
+            Node<T> current = head;
+            for (int i = 0; i < index - 1; i++) {
+                current = current.next;
+            }
+            current.next = current.next.next;
+            if (current.next == null) tail = current;
+        }
+
+        size--;
+    }
+
 }
