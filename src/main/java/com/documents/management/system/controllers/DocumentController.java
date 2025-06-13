@@ -17,7 +17,10 @@ public class DocumentController {
         }
 
         try {
-            new Document(title, content).save();
+            new Document(
+                title, 
+                content
+            ).save();
             GenericDialog.create("Documento criado com sucesso!", "Documento cadastrado com sucesso!");
             
             new MainMenuScreen();

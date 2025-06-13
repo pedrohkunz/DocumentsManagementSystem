@@ -3,6 +3,9 @@ package com.documents.management.system.models;
 import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDateTime;
+
 import com.documents.management.system.common.Utils;
 import com.documents.management.system.engine.algorithms.Huffman;
 import com.documents.management.system.engine.singletons.DocumentAVLTreeSingleton;
@@ -28,9 +31,18 @@ import lombok.Setter;
 public class Document implements Comparable<Document> {
     private String title;
     private String content;
+    private LocalDateTime createdAt;
+    private Long sizeInBytes;
 
     public static final String DOCUMENTS_FOLDER = Utils.getDocumentsDirectory() + "/DocumentsManagementSystem/";
     public static final String DOCUMENTS_FILE_EXTENSION = ".txt";
+
+    public Document(String title, String content) {
+        this.title = title;
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+        this.sizeInBytes = 0L;
+    }
 
     public Document save() {
         this.validateDocument();
@@ -42,6 +54,10 @@ public class Document implements Comparable<Document> {
             FileWriter fileWriter = new FileWriter(DOCUMENTS_FOLDER + title + DOCUMENTS_FILE_EXTENSION);
             fileWriter.write(compressedContent);
             fileWriter.close();
+
+            BasicFileAttributes attrs = Files.readAttributes(Paths.get(DOCUMENTS_FOLDER + title + DOCUMENTS_FILE_EXTENSION), BasicFileAttributes.class);
+            this.createdAt = LocalDateTime.ofInstant(attrs.creationTime().toInstant(), java.time.ZoneId.systemDefault());
+            this.sizeInBytes = Files.size(Paths.get(DOCUMENTS_FOLDER + title + DOCUMENTS_FILE_EXTENSION));
 
             CustomBtreePlus<Document> btreePlus = DocumentBtreePlusSingleton.getInstance();
             btreePlus.insert(this);
@@ -81,7 +97,7 @@ public class Document implements Comparable<Document> {
         if(selectedSearchMethod == "AVLTree") {
             return quickSearchAVL(keyword);
         }
-        
+
         return quickSearchBtree(keyword);
     }
 
@@ -169,8 +185,12 @@ public class Document implements Comparable<Document> {
         return tree;
     }
 
-    public static void loadAllInBtreePlus() {
-        CustomBtreePlus<Document> tree = new CustomBtreePlus<Document>();
+    public static void populateStructures() {
+        CustomBtreePlus<Document> btreePlus = new CustomBtreePlus<Document>();
+        CustomAVLTree<Document> avlTree = new CustomAVLTree<Document>();
+        CustomBTree<Document> btree = new CustomBTree<Document>();
+        CustomHashMap<String, Document> documentsHashMap = new CustomHashMap<String, Document>();
+        CustomLinkedList<Document> documentsLinkedList = new CustomLinkedList<Document>();
 
         try {
             Files.list(Paths.get(DOCUMENTS_FOLDER))
@@ -182,121 +202,29 @@ public class Document implements Comparable<Document> {
                     String content = "";
                     try {
                         content = Huffman.decode(new String(Files.readAllBytes(path)));
-                    } catch (Exception e) {
-                        throw new RuntimeException("Error reading document: " + e.getMessage(), e);
-                    }
+                        BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
+                        LocalDateTime createdAt = LocalDateTime.ofInstant(attrs.creationTime().toInstant(), java.time.ZoneId.systemDefault());
 
-                    tree.insert(new Document(title, content));
+                        Document document = new Document(title, content, createdAt, Files.size(path));
+
+                        btreePlus.insert(document);
+                        avlTree.insert(document);
+                        btree.insert(document);
+                        documentsHashMap.put(title, document);
+                        documentsLinkedList.add(document);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error populating structures: " + e.getMessage(), e);
+                    }
                 });
         } catch (Exception e) {
             throw new RuntimeException("Error loading documents: " + e.getMessage(), e);
         }
 
-        DocumentBtreePlusSingleton.setInstance(tree);
-    }
-
-    public static void loadAllInAVLTree() {
-        CustomAVLTree<Document> tree = new CustomAVLTree<Document>();
-
-        try {
-            Files.list(Paths.get(DOCUMENTS_FOLDER))
-                .filter(path -> path.toString().endsWith(DOCUMENTS_FILE_EXTENSION))
-                .forEach(path -> {
-                    String fileName = path.getFileName().toString();
-                    String title = fileName.substring(0, fileName.length() - DOCUMENTS_FILE_EXTENSION.length());
-                    
-                    String content = "";
-                    try {
-                        content = Huffman.decode(new String(Files.readAllBytes(path)));
-                    } catch (Exception e) {
-                        throw new RuntimeException("Error reading document: " + e.getMessage(), e);
-                    }
-
-                    tree.insert(new Document(title, content));
-                });
-        } catch (Exception e) {
-            throw new RuntimeException("Error loading documents: " + e.getMessage(), e);
-        }
-
-        DocumentAVLTreeSingleton.setInstance(tree);
-    }
-
-    public static void loadAllInBtree() {
-        CustomBTree<Document> tree = new CustomBTree<Document>();
-        try {
-            Files.list(Paths.get(DOCUMENTS_FOLDER))
-                .filter(path -> path.toString().endsWith(DOCUMENTS_FILE_EXTENSION))
-                .forEach(path -> {
-                    String fileName = path.getFileName().toString();
-                    String title = fileName.substring(0, fileName.length() - DOCUMENTS_FILE_EXTENSION.length());
-                    
-                    String content = "";
-                    try {
-                        content = Huffman.decode(new String(Files.readAllBytes(path)));
-                    } catch (Exception e) {
-                        throw new RuntimeException("Error reading document: " + e.getMessage(), e);
-                    }
-
-                    tree.insert(new Document(title, content));
-                });
-        } catch (Exception e) {
-            throw new RuntimeException("Error loading documents: " + e.getMessage(), e);
-        }
-
-        DocumentBTreeSingleton.setInstance(tree);
-    }
-
-    public static void loadAllInHashMap() {
-        CustomHashMap<String, Document> documentsMap = new CustomHashMap<String, Document>();
-
-        try {
-            Files.list(Paths.get(DOCUMENTS_FOLDER))
-                .filter(path -> path.toString().endsWith(DOCUMENTS_FILE_EXTENSION))
-                .forEach(path -> {
-                    String fileName = path.getFileName().toString();
-                    String title = fileName.substring(0, fileName.length() - DOCUMENTS_FILE_EXTENSION.length());
-                    
-                    String content = "";
-                    try {
-                        content = Huffman.decode(new String(Files.readAllBytes(path)));
-                    } catch (Exception e) {
-                        throw new RuntimeException("Error reading document: " + e.getMessage(), e);
-                    }
-
-                    documentsMap.put(title, new Document(title, content));
-                });
-        } catch (Exception e) {
-            throw new RuntimeException("Error loading documents: " + e.getMessage(), e);
-        }
-
-        
-        DocumentHashMapSingleton.setInstance(documentsMap);
-    }
-
-    public static void loadAllInLinkedList() {
-        CustomLinkedList<Document> documentsList = new CustomLinkedList<Document>();
-
-        try {
-            Files.list(Paths.get(DOCUMENTS_FOLDER))
-                .filter(path -> path.toString().endsWith(DOCUMENTS_FILE_EXTENSION))
-                .forEach(path -> {
-                    String fileName = path.getFileName().toString();
-                    String title = fileName.substring(0, fileName.length() - DOCUMENTS_FILE_EXTENSION.length());
-                    
-                    String content = "";
-                    try {
-                        content = Huffman.decode(new String(Files.readAllBytes(path)));
-                    } catch (Exception e) {
-                        throw new RuntimeException("Error reading document: " + e.getMessage(), e);
-                    }
-
-                    documentsList.add(new Document(title, content));
-                });
-        } catch (Exception e) {
-            throw new RuntimeException("Error loading documents: " + e.getMessage(), e);
-        }
-
-        DocumentLinkedListSingleton.setInstance(documentsList);
+        DocumentBtreePlusSingleton.setInstance(btreePlus);
+        DocumentAVLTreeSingleton.setInstance(avlTree);
+        DocumentBTreeSingleton.setInstance(btree);
+        DocumentHashMapSingleton.setInstance(documentsHashMap);
+        DocumentLinkedListSingleton.setInstance(documentsLinkedList);
     }
 
     private void validateDocument() {

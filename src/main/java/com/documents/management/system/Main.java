@@ -6,12 +6,7 @@ import com.documents.management.system.views.screens.MainMenuScreen;
 public class Main {
     public static void main(String[] args) {
         try {
-            Document.loadAllInBtreePlus();
-            Document.loadAllInAVLTree();
-            Document.loadAllInBtree();
-            Document.loadAllInHashMap();
-            Document.loadAllInLinkedList();
-
+            Document.populateStructures();
             new MainMenuScreen();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
