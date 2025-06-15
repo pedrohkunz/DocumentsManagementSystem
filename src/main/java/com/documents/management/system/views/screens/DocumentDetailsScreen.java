@@ -1,6 +1,8 @@
 package com.documents.management.system.views.screens;
 
 import com.documents.management.system.common.GlobalVariables;
+import com.documents.management.system.common.Utils;
+import com.documents.management.system.models.Document;
 import com.documents.management.system.views.components.LabeledField;
 import com.documents.management.system.views.dialogs.QuitAppDialog;
 
@@ -11,7 +13,7 @@ import java.awt.event.WindowEvent;
 
 public class DocumentDetailsScreen extends JFrame {
 
-    public DocumentDetailsScreen() {
+    public DocumentDetailsScreen(Document selectedDocument) {
         setTitle("Detalhes do Documento");
         setSize(GlobalVariables.SCREEN_WIDTH.getValue(), GlobalVariables.SCREEN_HEIGHT.getValue());
 
@@ -39,22 +41,24 @@ public class DocumentDetailsScreen extends JFrame {
 
         JTextField nameField = new JTextField(20);
         nameField.setEditable(false);
+        nameField.setText(selectedDocument.getTitle());
         panel.add(LabeledField.create("Nome:", nameField));
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         JTextField dateField = new JTextField(20);
         dateField.setEditable(false);
-        panel.add(LabeledField.create("Data:", dateField));
+        dateField.setText(Utils.formatDate(selectedDocument.getCreatedAt()));
+        panel.add(LabeledField.create("Data de criação:", dateField));
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         JTextField originalSizeField = new JTextField(20);
         originalSizeField.setEditable(false);
-        panel.add(LabeledField.create("Tamanho original:", originalSizeField));
+        panel.add(LabeledField.create("Tamanho do counteúdo original:", originalSizeField));
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         JTextField compressedSizeField = new JTextField(20);
         compressedSizeField.setEditable(false);
-        panel.add(LabeledField.create("Tamanho comprimido:", compressedSizeField));
+        panel.add(LabeledField.create("Tamanho do conteúdo comprimido:", compressedSizeField));
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         JLabel contentLabel = new JLabel("Conteúdo do texto (descomprimido):");
@@ -65,6 +69,7 @@ public class DocumentDetailsScreen extends JFrame {
 
         JTextArea contentArea = new JTextArea(5, 20);
         contentArea.setEditable(false);
+        contentArea.setText(selectedDocument.getContent());
         contentArea.setLineWrap(true);
         contentArea.setWrapStyleWord(true);
         contentArea.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -95,7 +100,7 @@ public class DocumentDetailsScreen extends JFrame {
         JPanel backButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         JButton backButton = new JButton("Voltar");
         backButton.addActionListener(_ -> {
-            new MainMenuScreen();
+            new ListDocumentsScreen();
             dispose();
         });
         backButtonPanel.add(backButton);

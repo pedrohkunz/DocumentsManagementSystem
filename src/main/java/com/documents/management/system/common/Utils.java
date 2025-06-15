@@ -1,6 +1,7 @@
 package com.documents.management.system.common;
 
 import java.io.File;
+import java.time.LocalDateTime;
 
 public class Utils {
     public static String getDocumentsDirectory() {
@@ -14,5 +15,14 @@ public class Utils {
         } else {
             return userHome;
         }
+    }
+
+    public static String formatDate(LocalDateTime createdAt) {
+        return String.format(
+            "%02d/%02d/%04d",
+            createdAt.getDayOfMonth(),
+            createdAt.getMonthValue(),
+            createdAt.getYear()
+        );
     }
 }

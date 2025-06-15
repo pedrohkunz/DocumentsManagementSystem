@@ -83,15 +83,6 @@ public class MainMenuScreen extends JFrame {
         ));
 
         panel.add(GenericButton.create(
-            "Detalhes do documento",
-            Color.BLACK,
-            _ -> {
-                new DocumentDetailsScreen();
-                dispose();
-            }
-        ));
-
-        panel.add(GenericButton.create(
             "Sair",
             Color.RED,
             _ -> {

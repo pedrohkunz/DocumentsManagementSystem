@@ -55,8 +55,19 @@ public class ListDocumentsScreen extends JFrame {
             table.setFillsViewportHeight(true);
             table.setRowHeight(30);
             table.setEnabled(false);
+            table.setDefaultEditor(Object.class, null);
             table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
             table.setFont(new Font("Arial", Font.PLAIN, 12));
+            table.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    int row = table.rowAtPoint(evt.getPoint());
+                    if (row >= 0) {
+                        Document selectedDocument = documents.get(row);
+                        new DocumentDetailsScreen(selectedDocument);
+                        dispose();
+                    }
+                }
+            });
 
             JScrollPane scrollPane = new JScrollPane(table);
             scrollPane.setPreferredSize(new Dimension(500, 300));
