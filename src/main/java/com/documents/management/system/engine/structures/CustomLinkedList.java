@@ -13,9 +13,9 @@ public class CustomLinkedList<T> {
         this.size = 0;
     }
 
-    private static class Node<T> {
-        T value;
-        Node<T> next;
+    public static class Node<T> {
+        public T value;
+        public Node<T> next;
 
         Node(T value) {
             this.value = value;
