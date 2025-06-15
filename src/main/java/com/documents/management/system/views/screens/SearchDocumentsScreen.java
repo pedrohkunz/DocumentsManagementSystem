@@ -58,14 +58,9 @@ public class SearchDocumentsScreen extends JFrame {
         searchInAVLTree.setSelected(false);
         searchInAVLTree.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // JRadioButton searchWithRelevanceIndex = new JRadioButton("");
-        // searchWithRelevanceIndex.setSelected(false);
-        // searchWithRelevanceIndex.setAlignmentX(Component.LEFT_ALIGNMENT);
-
         ButtonGroup group = new ButtonGroup();
         group.add(searchInBTree);
         group.add(searchInAVLTree);
-        //group.add(searchWithRelevanceIndex);
 
         panel.add(searchInBTree);
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -73,11 +68,14 @@ public class SearchDocumentsScreen extends JFrame {
         panel.add(searchInAVLTree);
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        //panel.add(searchWithRelevanceIndex);
-        //panel.add(Box.createRigidArea(new Dimension(0, 20)));
-
         JTextField searchField = new JTextField(20);
         panel.add(LabeledField.create("Palavra-chave:", searchField));
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+
+        JLabel searchInfoLabel = new JLabel("A busca é realizada com base no conteúdo do documento.");
+        searchInfoLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        searchInfoLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(searchInfoLabel);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         JButton searchButton = new JButton("Pesquisar");
@@ -87,7 +85,7 @@ public class SearchDocumentsScreen extends JFrame {
 
         resultsPanel = new JPanel();
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
-        resultsPanel.setAutoscrolls(rootPaneCheckingEnabled);
+        resultsPanel.setAutoscrolls(true);
         resultsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         updateResults("", group);
         panel.add(resultsPanel);
