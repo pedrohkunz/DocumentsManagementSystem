@@ -3,7 +3,6 @@ package com.documents.management.system.controllers;
 import com.documents.management.system.engine.structures.CustomLinkedList;
 import com.documents.management.system.models.Document;
 import com.documents.management.system.views.dialogs.GenericDialog;
-import com.documents.management.system.views.screens.MainMenuScreen;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,8 +21,6 @@ public class DocumentController {
                 content
             ).save();
             GenericDialog.create("Documento criado com sucesso!", "Documento cadastrado com sucesso!");
-            
-            new MainMenuScreen();
         } catch (RuntimeException e) {
             GenericDialog.create("Erro", "Erro inesperado ao cadastrar o documento.");
             throw new RuntimeException(e.getMessage(), e);
