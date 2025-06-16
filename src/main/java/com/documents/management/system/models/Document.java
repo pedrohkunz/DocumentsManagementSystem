@@ -1,6 +1,7 @@
 package com.documents.management.system.models;
 
 import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -33,6 +34,8 @@ public class Document implements Comparable<Document> {
     private String content;
     private LocalDateTime createdAt;
     private Long sizeInBytes;
+    private Long contentSize;
+    private Long contentSizeAfterCompress;
 
     public static final String DOCUMENTS_FOLDER = Utils.getDocumentsDirectory() + "/DocumentsManagementSystem/";
     public static final String DOCUMENTS_FILE_EXTENSION = ".txt";
@@ -42,6 +45,8 @@ public class Document implements Comparable<Document> {
         this.content = content;
         this.createdAt = LocalDateTime.now();
         this.sizeInBytes = 0L;
+        this.contentSize = 0L;
+        this.contentSizeAfterCompress = 0L;
     }
 
     public Document save() {
@@ -58,6 +63,9 @@ public class Document implements Comparable<Document> {
             BasicFileAttributes attrs = Files.readAttributes(Paths.get(DOCUMENTS_FOLDER + title + DOCUMENTS_FILE_EXTENSION), BasicFileAttributes.class);
             this.createdAt = LocalDateTime.ofInstant(attrs.creationTime().toInstant(), java.time.ZoneId.systemDefault());
             this.sizeInBytes = Files.size(Paths.get(DOCUMENTS_FOLDER + title + DOCUMENTS_FILE_EXTENSION));
+            
+            this.contentSize = (long) content.getBytes(StandardCharsets.UTF_8).length;
+            this.contentSizeAfterCompress = (long) compressedContent.split("::SEPARATOR::")[1].getBytes(StandardCharsets.UTF_8).length;
 
             CustomBtreePlus<Document> btreePlus = DocumentBtreePlusSingleton.getInstance();
             btreePlus.insert(this);
@@ -201,11 +209,14 @@ public class Document implements Comparable<Document> {
                     
                     String content = "";
                     try {
-                        content = Huffman.decode(new String(Files.readAllBytes(path)));
+                        String compressedContent = new String(Files.readAllBytes(path));
+                        String compressedContentData = compressedContent.split("::SEPARATOR::")[1];
+
+                        content = Huffman.decode(compressedContent);
                         BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
                         LocalDateTime createdAt = LocalDateTime.ofInstant(attrs.creationTime().toInstant(), java.time.ZoneId.systemDefault());
 
-                        Document document = new Document(title, content, createdAt, Files.size(path));
+                        Document document = new Document(title, content, createdAt, Files.size(path), (long) content.getBytes(StandardCharsets.UTF_8).length, (long) compressedContentData.getBytes(StandardCharsets.UTF_8).length);
 
                         btreePlus.insert(document);
                         avlTree.insert(document);

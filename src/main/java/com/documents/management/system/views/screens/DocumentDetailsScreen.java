@@ -55,11 +55,13 @@ public class DocumentDetailsScreen extends JFrame {
         originalSizeField.setEditable(false);
         panel.add(LabeledField.create("Tamanho do counteúdo original:", originalSizeField));
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        originalSizeField.setText(selectedDocument.getContentSize().toString());
 
         JTextField compressedSizeField = new JTextField(20);
         compressedSizeField.setEditable(false);
         panel.add(LabeledField.create("Tamanho do conteúdo comprimido:", compressedSizeField));
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        compressedSizeField.setText(selectedDocument.getContentSizeAfterCompress().toString());
 
         JLabel contentLabel = new JLabel("Conteúdo do texto (descomprimido):");
         contentLabel.setFont(new Font("Arial", Font.BOLD, 14));
