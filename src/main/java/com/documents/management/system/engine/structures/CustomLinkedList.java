@@ -184,4 +184,14 @@ public class CustomLinkedList<T> {
         size--;
     }
 
+    public CustomLinkedList<T> clone() {
+        CustomLinkedList<T> clonedList = new CustomLinkedList<>();
+        Node<T> current = head;
+        while (current != null) {
+            clonedList.add(current.value);
+            current = current.next;
+        }
+        return clonedList;
+    }
+
 }

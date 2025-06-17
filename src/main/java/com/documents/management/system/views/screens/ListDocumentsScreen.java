@@ -36,7 +36,7 @@ public class ListDocumentsScreen extends JFrame {
         panel.setAlignmentY(Component.CENTER_ALIGNMENT);
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel titleLabel = new JLabel("Documentos Cadastrados");
+        JLabel titleLabel = new JLabel("Documentos Cadastrados (Clique em um documento para ver detalhes)");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(titleLabel);

@@ -192,7 +192,7 @@ public class StatisticsAndSortScreen extends JFrame {
         for (String algorithm : algorithms) {
             SortAlgorithmInterface sortInstance = SortAlgorithmFactory.createSortAlgorithm(algorithm);
             for (String criterion : criteria) {
-                CustomLinkedList<Document> listCopy = documentsList;
+                CustomLinkedList<Document> listCopy = documentsList.clone();
                 long start = System.nanoTime();
 
                 switch (criterion) {
