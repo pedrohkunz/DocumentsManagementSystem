@@ -53,13 +53,13 @@ public class DocumentDetailsScreen extends JFrame {
 
         JTextField originalSizeField = new JTextField(20);
         originalSizeField.setEditable(false);
-        panel.add(LabeledField.create("Tamanho do counteúdo original:", originalSizeField));
+        panel.add(LabeledField.create("Tamanho do counteúdo original em bits:", originalSizeField));
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
         originalSizeField.setText(selectedDocument.getContentSize().toString());
 
         JTextField compressedSizeField = new JTextField(20);
         compressedSizeField.setEditable(false);
-        panel.add(LabeledField.create("Tamanho do conteúdo comprimido:", compressedSizeField));
+        panel.add(LabeledField.create("Tamanho do conteúdo comprimido em bits:", compressedSizeField));
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
         compressedSizeField.setText(selectedDocument.getContentSizeAfterCompress().toString());
 
@@ -83,18 +83,6 @@ public class DocumentDetailsScreen extends JFrame {
 
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         buttonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        JButton deleteButton = new JButton("Excluir");
-        deleteButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        buttonsPanel.add(deleteButton);
-
-        JButton recompressButton = new JButton("Recomprimir");
-        recompressButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        buttonsPanel.add(recompressButton);
-
-        JButton visualizeIndexesButton = new JButton("Visualizar índices");
-        visualizeIndexesButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        buttonsPanel.add(visualizeIndexesButton);
 
         panel.add(buttonsPanel);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));

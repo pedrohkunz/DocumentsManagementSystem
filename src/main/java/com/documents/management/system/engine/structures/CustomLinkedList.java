@@ -1,5 +1,6 @@
 package com.documents.management.system.engine.structures;
 
+import com.documents.management.system.common.Utils;
 import com.documents.management.system.models.Document;
 
 public class CustomLinkedList<T> {
@@ -97,7 +98,7 @@ public class CustomLinkedList<T> {
     }
 
     public String[][] toMatrix() {
-        String[][] matrix = new String[size][2];
+        String[][] matrix = new String[size][5];
         Node<T> current = head;
         int index = 0;
 
@@ -106,6 +107,9 @@ public class CustomLinkedList<T> {
                 Document doc = (Document) current.value;
                 matrix[index][0] = doc.getTitle();
                 matrix[index][1] = doc.getContent();
+                matrix[index][2] = String.valueOf(doc.getContentSize());
+                matrix[index][3] = String.valueOf(doc.getContentSizeAfterCompress());
+                matrix[index][4] = Utils.formatDate(doc.getCreatedAt());
             } else {
                 matrix[index][0] = current.value.toString();
                 matrix[index][1] = "";

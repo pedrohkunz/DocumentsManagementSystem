@@ -64,7 +64,7 @@ public class Document implements Comparable<Document> {
             this.createdAt = LocalDateTime.ofInstant(attrs.creationTime().toInstant(), java.time.ZoneId.systemDefault());
             this.sizeInBytes = Files.size(Paths.get(DOCUMENTS_FOLDER + title + DOCUMENTS_FILE_EXTENSION));
             
-            this.contentSize = (long) content.getBytes(StandardCharsets.UTF_8).length;
+            this.contentSize = (long) content.getBytes(StandardCharsets.UTF_8).length * 8;
             this.contentSizeAfterCompress = (long) compressedContent.split("::SEPARATOR::")[1].getBytes(StandardCharsets.UTF_8).length;
 
             CustomBtreePlus<Document> btreePlus = DocumentBtreePlusSingleton.getInstance();
@@ -210,13 +210,22 @@ public class Document implements Comparable<Document> {
                     String content = "";
                     try {
                         String compressedContent = new String(Files.readAllBytes(path));
-                        String compressedContentData = compressedContent.split("::SEPARATOR::")[1];
-
                         content = Huffman.decode(compressedContent);
+
+                        String compressedContentBits = compressedContent.split("::SEPARATOR::")[1];
+                        Long contentBits = (long) content.getBytes(StandardCharsets.UTF_8).length * 8;
+
                         BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
                         LocalDateTime createdAt = LocalDateTime.ofInstant(attrs.creationTime().toInstant(), java.time.ZoneId.systemDefault());
 
-                        Document document = new Document(title, content, createdAt, Files.size(path), (long) content.getBytes(StandardCharsets.UTF_8).length, (long) compressedContentData.getBytes(StandardCharsets.UTF_8).length);
+                        Document document = new Document(
+                            title,
+                            content,
+                            createdAt,
+                            Files.size(path),
+                            (long) contentBits,
+                            (long) compressedContentBits.getBytes(StandardCharsets.UTF_8).length
+                        );
 
                         btreePlus.insert(document);
                         avlTree.insert(document);
