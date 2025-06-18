@@ -74,15 +74,6 @@ public class MainMenuScreen extends JFrame {
         ));
 
         panel.add(GenericButton.create(
-            "Gerenciar compressão e índices",
-            Color.BLACK,
-            _ -> {
-                new StructureManagementScreen();
-                dispose();
-            }
-        ));
-
-        panel.add(GenericButton.create(
             "Sair",
             Color.RED,
             _ -> {
